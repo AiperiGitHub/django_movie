@@ -1,6 +1,7 @@
 from datetime import date
 
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -110,7 +111,7 @@ class Rating(models.Model):
     """Рейтинг"""
     ip = models.CharField("IP адрес", max_length=15)
     star = models.ForeignKey(RatingStar, on_delete=models.CASCADE, verbose_name="звезда")
-    movie = models.ForeignKey(Movie, on_delete=models.CharField, verbose_name="фильм")
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, verbose_name="фильм")
 
     def __str__(self):
         return f"{self.star} - {self.movie}"
@@ -119,6 +120,7 @@ class Rating(models.Model):
         verbose_name = "Рейтинг"
         verbose_name_plural = "Рейтинги"
 
+
 class Reviews(models.Model):
     """Отзывы"""
     email = models.EmailField()
@@ -126,9 +128,10 @@ class Reviews(models.Model):
     text = models.TextField("Сообщение", max_length=5000)  #5000 чтоб отзывы были короткими
     parent = models.ForeignKey(
         'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True
-    )       # 'self' - запись будет ссылаться на запись в этой же таблице.
+    )
     movie = models.ForeignKey(Movie, verbose_name="фильм", on_delete=models.CASCADE)
 
+    # 'self' - запись будет ссылаться на запись в этой же таблице.
     def __str__(self):
         return f"{self.name} - {self.movie}"
 
@@ -137,10 +140,8 @@ class Reviews(models.Model):
         verbose_name_plural = "Отзывы"
 
 
-
-
-
-
+class Review(models.Model):
+    pass
 
 
 #models наследуется от класса Model
@@ -155,3 +156,4 @@ class Reviews(models.Model):
 # image = models.ImageField("Изображение", upload_to="actors/") указываем директорию куда будем загружать изображение
 # ManyToManyField отношение многим ко многим
 # CASCADE  - при удалении фильма, все связанные кадры тоже удалятся
+
